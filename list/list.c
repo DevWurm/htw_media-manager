@@ -64,10 +64,10 @@ tList* getWhere(tList* list, tPredicate pred, int argc, ...) {
     if (result == NULL) return NULL;
 
     va_list vl;
-    va_start(vl, argc);
 
     tListEl* p;
     for(p = list->head; p != NULL; p = p->next) {
+        va_start(vl, argc);
         if (pred(p->value, argc, vl)) {
             insert(result, p->value);
         }

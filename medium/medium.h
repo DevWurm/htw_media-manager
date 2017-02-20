@@ -1,6 +1,8 @@
 #ifndef __MEDIUM_H__
 #define __MEDIUM_H__
 
+#include <stdarg.h>
+
 #include "shared/shared.h"
 
 typedef struct {
@@ -15,5 +17,9 @@ ERRSTATE deleteMediumDeleter(void* target);
 
 char* mediumSerializer(void* val);
 void* mediumDeserializer(char* val);
+
+BOOL hasTitlePredicate(void* vmedium, int argc, va_list argv);
+BOOL hasArtistPredicate(void* vmedium, int argc, va_list argv);
+BOOL hasBorrowerPredicate(void* vmedium, int argc, va_list argv);
 
 #endif

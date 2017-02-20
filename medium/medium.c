@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
 
 #include "shared/shared.h"
 #include "medium.h"
@@ -66,4 +67,31 @@ void* mediumDeserializer(char* val) {
     if (borrower == NULL) return NULL;
 
     return createMedium(title, artist, borrower);
+}
+
+BOOL hasTitlePredicate(void* vmedium, int argc, va_list argv) {
+    if (argc < 1 || vmedium == NULL) return FALSE;
+
+    tMedium* medium = vmedium;
+    char* ref = va_arg(argv, char*);
+
+    return strcmp(medium->title, ref) == 0 ? TRUE : FALSE;
+}
+
+BOOL hasArtistPredicate(void* vmedium, int argc, va_list argv) {
+    if (argc < 1 || vmedium == NULL) return FALSE;
+
+    tMedium* medium = vmedium;
+    char* ref = va_arg(argv, char*);
+
+    return strcmp(medium->artist, ref) == 0 ? TRUE : FALSE;
+}
+
+BOOL hasBorrowerPredicate(void* vmedium, int argc, va_list argv) {
+    if (argc < 1 || vmedium == NULL) return FALSE;
+
+    tMedium* medium = vmedium;
+    char* ref = va_arg(argv, char*);
+
+    return strcmp(medium->borrower, ref) == 0 ? TRUE : FALSE;
 }
