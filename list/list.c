@@ -1,8 +1,12 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <stdarg.h>
+#include <string.h>
 
 #include "shared/shared.h"
 #include "list.h"
+
+#define BUF_SIZE 2048
 
 // @private
 ERRSTATE deleteHead(tList* target, tDeleter deleter) {
@@ -116,8 +120,41 @@ ERRSTATE deleteIterator(tIterator* target) {
 };
 
 void* getNext(tIterator* it) {
+    if (it->next == NULL) return NULL;
+
     void* data = it->next->value;
     it->next = it->next->next;
 
     return data;
 };
+
+// Persistance operators
+ERRSTATE storeList(tList* list, FILE* dest, tSerializer serializer) {
+    if (list == NULL || dest == NULL || serializer == NULL) return ERR;
+
+    tIterator* it;
+    void* val;
+
+    for (it = toIterator(list); (val = getNext(it));) {
+        char* serialization = serializer(val);
+
+        if (serialization == NULL || fputs(serialization, dest) == EOF || putc('\n', dest) == EOF) return ERR;
+
+        free(serialization);
+    } 
+
+    return OK;
+}
+
+ERRSTATE restoreList(tList* list, FILE* src, tDeserializer deserializer) {
+    char buf[BUF_SIZE] = "";
+
+    while(fgets(buf, BUF_SIZE, src)) {
+        buf[strlen(buf) - 1] = '\0';
+        if (strlen(buf) > 0) {
+            if (!insert(list, deserializer(buf))) return ERR;
+        }
+    }
+
+    return OK;
+}

@@ -1,6 +1,8 @@
 #ifndef __SHARED_H__
 #define __SHARED_H__
 
+#include <stdio.h>
+
 #define TRUE 1
 #define FALSE 0
 #define BOOL int // values TRUE and FALSE are intended

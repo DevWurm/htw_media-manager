@@ -13,4 +13,7 @@ tMedium* createMedium(const char* title, const char* artist, const char* borrowe
 ERRSTATE deleteMedium(tMedium* target);
 ERRSTATE deleteMediumDeleter(void* target);
 
+char* mediumSerializer(void* val);
+void* mediumDeserializer(char* val);
+
 #endif

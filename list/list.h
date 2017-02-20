@@ -20,6 +20,8 @@ typedef struct {
 
 typedef BOOL (*tPredicate)(void* val, int argc, va_list argv);
 typedef ERRSTATE (*tDeleter)(void* val);
+typedef char* (*tSerializer)(void* val);
+typedef void* (*tDeserializer)(char* val);
 
 // List operations
 tList* createList();
@@ -34,5 +36,9 @@ ERRSTATE deleteWhere(tList* list, tDeleter deleter, tPredicate pred, int argc, .
 tIterator* toIterator(tList* list);
 ERRSTATE deleteIterator(tIterator* target);
 void* getNext(tIterator* it);
+
+// Persistance Operators
+ERRSTATE storeList(tList* list, FILE* dest, tSerializer serializer);
+ERRSTATE restoreList(tList* list, FILE* src, tDeserializer deserializer);
 
 #endif

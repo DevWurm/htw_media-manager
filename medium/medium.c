@@ -41,3 +41,29 @@ ERRSTATE deleteMedium(tMedium* target) {
 ERRSTATE deleteMediumDeleter(void* target) {
     return deleteMedium((tMedium*) target);
 }
+
+char* mediumSerializer(void* vval) {
+    if (vval == NULL) return NULL;
+
+    tMedium* val = vval;
+
+    char* res = malloc(((strlen(val->title) + 1) + (strlen(val->artist) + 1) + (strlen(val->borrower) + 1)) * sizeof(char));
+    if (res == NULL) return NULL;
+
+    sprintf(res, "%s;%s;%s", val->title, val->artist, val->borrower);
+
+    return res;
+}
+
+void* mediumDeserializer(char* val) {
+    char* title = strtok(val, ";");
+    if (title == NULL) return NULL;
+
+    char* artist = strtok(NULL, ";");
+    if (artist == NULL) return NULL;
+
+    char* borrower = strtok(NULL, ";");
+    if (borrower == NULL) return NULL;
+
+    return createMedium(title, artist, borrower);
+}

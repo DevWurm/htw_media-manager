@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "cli.h"
 #include "list/list.h"
@@ -15,10 +16,15 @@ ERRSTATE insertNewMedium(tList* list) {
 
     printf("Title: ");
     fgets(title, BUF_SIZE, stdin);
+    title[strlen(title) - 1] = '\0';
+
     printf("Artist: ");
     fgets(artist, BUF_SIZE, stdin);
+    artist[strlen(artist) - 1] = '\0';
+
     printf("Borrower: ");
     fgets(borrower, BUF_SIZE, stdin);
+    borrower[strlen(borrower) - 1] = '\0';
 
     return insert(list, createMedium(title, artist, borrower));
 }
@@ -44,7 +50,7 @@ void runCliInterface(int argc, char* argv[], tList* data) {
         clearBuffer(stdin); 
 
         switch (command) {
-            case 'N': if (!insertNewMedium(data)) return; break;
+            case 'N': case 'n': if (!insertNewMedium(data)) return; break;
         }
     } while (command != 'e' && command != 'E' && command != EOF);
 }
