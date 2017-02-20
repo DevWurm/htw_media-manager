@@ -8,4 +8,6 @@
 #define OK 1
 #define ERRSTATE int // values OK and ERR intended
 
+void clearBuffer(FILE* stream);
+
 #endif
