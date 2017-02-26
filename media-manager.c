@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "interface/cli/cli.h"
+#include "interface/libforms/libforms.h"
 #include "list/list.h"
 #include "medium/medium.h"
 
@@ -32,7 +33,11 @@ int main(int argc, char* argv[]) {
 
     restoreMediaList(defaultPersLocation, list);
 
-    runCliInterface(list);
+    if (argc > 1 && strcmp("-c", argv[1]) == 0) {
+       runCliInterface(argc, argv, list);
+    } else {
+        runLibformsInterface(argc, argv, list);
+    }
 
     storeMediaList(defaultPersLocation, list);
 
