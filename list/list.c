@@ -9,8 +9,9 @@
 #define BUF_SIZE 2048
 
 // @private
+// delete the head element of a list; if a deleter is specified also the list values are deleted
 ERRSTATE deleteHead(tList* target, tDeleter deleter) {
-    if (target == NULL || deleter == NULL) return ERR;
+    if (target == NULL) return ERR;
 
     tListEl* head = target->head;
 
@@ -18,7 +19,10 @@ ERRSTATE deleteHead(tList* target, tDeleter deleter) {
 
     target->head = head->next;
 
-    if (!deleter(head->value)) return ERR;
+    if (deleter != NULL) {
+        if (!deleter(head->value)) return ERR;
+    }
+
     free(head);
 
     return OK;
@@ -32,8 +36,9 @@ tList* createList() {
     return list;
 }
 
+// delete a list; if a deleter is specified also the list values are deleted
 ERRSTATE deleteList(tList* target, tDeleter deleter) {
-    if (target == NULL || deleter == NULL) return ERR;
+    if (target == NULL) return ERR;
 
     while (target->head != NULL) {
         if (deleteHead(target, deleter) == ERR) return ERR;
@@ -76,8 +81,9 @@ tList* getWhere(tList* list, tPredicate pred, int argc, ...) {
     return result;
 }
 
+// delete all elements in a list where a specified predicate matches; if a deleter is specified also the list values are deleted
 ERRSTATE deleteWhere(tList* list, tDeleter deleter, tPredicate pred, int argc, ...) {
-    if (list == NULL || deleter == NULL || pred == NULL) return ERR;
+    if (list == NULL || pred == NULL) return ERR;
 
     va_list vl;
     va_start(vl, argc);
@@ -94,7 +100,11 @@ ERRSTATE deleteWhere(tList* list, tDeleter deleter, tPredicate pred, int argc, .
             tListEl* el = p->next;
             p->next = el->next;
 
-            if (!deleter(el)) return ERR;
+            if(deleter != NULL) {
+                if (!deleter(el)) return ERR;
+            }
+            
+            free(el);
         } else {
             p = p->next;
         }
