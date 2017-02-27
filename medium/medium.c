@@ -1,11 +1,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+#include <time.h>
 
 #include "shared/shared.h"
 #include "medium.h"
 
-tMedium* createMedium(const char* title, const char* artist, const char* borrower) {
+// @private
+// create a new medium containing the specified information and with the specified id; the information get copied
+tMedium* createMediumWithId(unsigned long id, const char* title, const char* artist, const char* borrower) {
     if (title == NULL || artist == NULL || borrower == NULL) return NULL;
 
     tMedium* medium = malloc(sizeof(tMedium));
@@ -24,7 +27,31 @@ tMedium* createMedium(const char* title, const char* artist, const char* borrowe
     strcpy(medium->artist, artist);
     strcpy(medium->borrower, borrower);
 
+    medium->id = id;
+
     return medium;
+}
+
+// create a new medium containing the specified information; the information get copied
+tMedium* createMedium(const char* title, const char* artist, const char* borrower) {
+    // For creating a new medium the current epoch time, the current 
+    // clock cycle since process start and the records content is used as input
+    // to the djb2 hash algorithm to generate a ID for the record,
+    // because it is an easy, yet practically robust way for identifying a record in most
+    // relevant cases.
+    time_t currEpochTime;
+    time(&currEpochTime);
+
+    clock_t currClockTicks = clock();
+
+    // characteristic string
+    const int charStringLen = snprintf(NULL, 0, "%ld%ld%s%s%s", currEpochTime, currClockTicks, title, artist, borrower) + 1;
+    char charString[charStringLen];
+    snprintf(charString, charStringLen, "%ld%ld%s%s%s", currEpochTime, currClockTicks, title, artist, borrower);
+
+    unsigned long id = djb2Hash(charString);
+
+    return createMediumWithId(id, title, artist, borrower);
 }
 
 ERRSTATE deleteMedium(tMedium* target) {
@@ -48,16 +75,23 @@ char* mediumSerializer(void* vval) {
 
     tMedium* val = vval;
 
-    char* res = malloc(((strlen(val->title) + 1) + (strlen(val->artist) + 1) + (strlen(val->borrower) + 1)) * sizeof(char));
+    const int idStrLen = snprintf(NULL, 0, "%lx", val->id) + 1;
+    char idBuffer[idStrLen];
+    snprintf(idBuffer, idStrLen, "%lx", val->id);
+
+    char* res = malloc(((strlen(idBuffer) + 1) + (strlen(val->title) + 1) + (strlen(val->artist) + 1) + (strlen(val->borrower) + 1)) * sizeof(char));
     if (res == NULL) return NULL;
 
-    sprintf(res, "%s;%s;%s", val->title, val->artist, val->borrower);
+    sprintf(res, "%s;%s;%s;%s", idBuffer, val->title, val->artist, val->borrower);
 
     return res;
 }
 
 void* mediumDeserializer(char* val) {
-    char* title = strtok(val, ";");
+    char* idBuffer = strtok(val, ";");
+    if (idBuffer == NULL) return NULL;
+
+    char* title = strtok(NULL, ";");
     if (title == NULL) return NULL;
 
     char* artist = strtok(NULL, ";");
@@ -66,7 +100,16 @@ void* mediumDeserializer(char* val) {
     char* borrower = strtok(NULL, ";");
     if (borrower == NULL) return NULL;
 
-    return createMedium(title, artist, borrower);
+    return createMediumWithId(strtoul(idBuffer, NULL, 16),title, artist, borrower);
+}
+
+BOOL hasIdPredicate(void* vmedium, int argc, va_list argv) {
+    if (argc < 1 || vmedium == NULL) return FALSE;
+
+    tMedium* medium = vmedium;
+    unsigned long ref = va_arg(argv, unsigned long);
+
+    return medium->id == ref;
 }
 
 BOOL hasTitlePredicate(void* vmedium, int argc, va_list argv) {

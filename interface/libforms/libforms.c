@@ -31,11 +31,9 @@ void insertRecord() {
     const char* borrower = fl_get_input(gui->insert_input_borrower);
 
     if (!insert(targetList, createMedium(title, artist, borrower))) fputs("Error while inserting into the datastore", stderr);
-
-    setTableView(targetList, gui);
 }
 
-// search recors in the current datastore based on the current GUIs search fields and update the table view
+// search records in the current datastore based on the current GUIs search fields and update the table view
 void searchRecords() {
     if (gui == NULL || targetList == NULL) return;
 
@@ -83,6 +81,13 @@ void searchRecords() {
     setTableView(resultList, gui);
 
     deleteList(resultList, NULL);
+}
+
+// delete the record with the specified ID from the datastrore
+void deleteRecord(unsigned long id) {
+   if (targetList == NULL) return;
+
+    deleteWhere(targetList, &deleteMediumDeleter, &hasIdPredicate, 1, id);
 }
 
 // run a simple graphical user interface based on libforms

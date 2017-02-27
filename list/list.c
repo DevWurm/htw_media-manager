@@ -90,18 +90,20 @@ ERRSTATE deleteWhere(tList* list, tDeleter deleter, tPredicate pred, int argc, .
 
     // handle all cases where the target elements are head elements
     while (list->head != NULL && pred(list->head->value, argc, vl)) {
+        va_start(vl, argc);
         if (!deleteHead(list, deleter)) return ERR;
     }
 
     tListEl* p;
     p = list->head; 
     while (p != NULL && p->next != NULL ) {
+        va_start(vl, argc);
         if (pred(p->next->value, argc, vl)) {
             tListEl* el = p->next;
-            p->next = el->next;
+            p->next = p->next->next;
 
             if(deleter != NULL) {
-                if (!deleter(el)) return ERR;
+                if (!deleter(el->value)) return ERR;
             }
             
             free(el);

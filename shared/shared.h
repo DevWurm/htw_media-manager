@@ -12,4 +12,6 @@
 
 void clearBuffer(FILE* stream);
 
+unsigned long djb2Hash(char* str);
+
 #endif

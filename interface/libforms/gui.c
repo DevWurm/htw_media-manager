@@ -41,7 +41,7 @@ void setTableView(tList* source, FD_libformsGUI* gui) {
         fl_add_text( FL_NORMAL_TEXT, 150, yCord, 100, 20, currMedium->artist);
         fl_add_text( FL_NORMAL_TEXT, 250, yCord, 100, 20, currMedium->borrower);
         obj = fl_add_button( FL_NORMAL_BUTTON, 350, yCord, 50, 20, "X" );
-        fl_set_object_callback( obj, deleteRecordCallback, 0 );
+        fl_set_object_callback( obj, deleteRecordCallback, (long) currMedium->id);
 
         yCord += 30;
     }
@@ -133,12 +133,14 @@ FD_libformsGUI * create_form_libformsGUI( void ) {
 // Callbacks
 void insertRecordCallback( FL_OBJECT* source, long arg) {
     insertRecord();
+    searchRecords(); // update table view
 }
 
 void searchRecordsCallback( FL_OBJECT* source, long arg) {
-   searchRecords(); 
+    searchRecords(); 
 }
 
 void deleteRecordCallback( FL_OBJECT* source, long arg) {
-    return;
+    deleteRecord((unsigned long) arg);
+    searchRecords(); // update table view
 }

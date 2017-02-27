@@ -6,6 +6,7 @@
 #include "shared/shared.h"
 
 typedef struct {
+    unsigned long id;
     char* title;
     char* artist;
     char* borrower;
@@ -18,6 +19,7 @@ ERRSTATE deleteMediumDeleter(void* target);
 char* mediumSerializer(void* val);
 void* mediumDeserializer(char* val);
 
+BOOL hasIdPredicate(void* vmedium, int argc, va_list argv);
 BOOL hasTitlePredicate(void* vmedium, int argc, va_list argv);
 BOOL hasArtistPredicate(void* vmedium, int argc, va_list argv);
 BOOL hasBorrowerPredicate(void* vmedium, int argc, va_list argv);
