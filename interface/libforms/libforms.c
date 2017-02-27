@@ -1,5 +1,7 @@
 #include <forms.h>
 #include <signal.h>
+#include <stdio.h>
+#include <string.h>
 
 #include "libforms.h"
 #include "gui.h"
@@ -11,13 +13,16 @@ FD_libformsGUI* gui;
 tList* targetList;
 
 // @private
+// hide the current gui and trigger it to make the detection of the visibility change possible
 void hideGUIHandler(int signal) {
     if (gui != NULL) {
         fl_hide_form(gui->libformsGUI);
+        // trigger a object on the form, so the fl_do_forms function exits
         fl_trigger_object(gui->trigger_object);
     }
 }
 
+// insert a new record to the current datastore using the input fieds of the current gui
 void insertRecord() {
     if (gui == NULL || targetList == NULL) return;
 
@@ -25,12 +30,68 @@ void insertRecord() {
     const char* artist = fl_get_input(gui->insert_input_artist);
     const char* borrower = fl_get_input(gui->insert_input_borrower);
 
-    insert(targetList, createMedium(title, artist, borrower));
+    if (!insert(targetList, createMedium(title, artist, borrower))) fputs("Error while inserting into the datastore", stderr);
+
+    setTableView(targetList, gui);
 }
 
+// search recors in the current datastore based on the current GUIs search fields and update the table view
+void searchRecords() {
+    if (gui == NULL || targetList == NULL) return;
+
+    tList* bufList = NULL; // buffer reference for freeing result lists
+    tList* resultList = NULL;
+
+    const char* title = fl_get_input(gui->search_input_title);
+    const char* artist = fl_get_input(gui->search_input_artist);
+    const char* borrower = fl_get_input(gui->search_input_borrower);
+
+    if (strlen(title) == 0 && strlen(artist) == 0 && strlen(borrower) == 0) {
+        setTableView(targetList, gui);
+        return;
+    }
+
+    // set result if searched by title
+    if (strlen(title) > 0) {
+        resultList = getWhere(targetList, &hasTitlePredicate, 1, title);
+    }
+
+    // set or update result if searched by artist
+    if (strlen(artist) > 0) {
+        if (resultList != NULL) {
+            bufList = resultList;
+            resultList = getWhere(resultList, &hasArtistPredicate, 1, artist);
+            deleteList(bufList, NULL);
+        } else {
+            resultList = getWhere(targetList, &hasArtistPredicate, 1, artist);
+        }
+
+    }
+
+    // set or update result if searched by borrower
+    if (strlen(borrower) > 0) {
+        if (resultList != NULL) {
+            bufList = resultList;
+            resultList = getWhere(resultList, &hasBorrowerPredicate, 1, borrower);
+            deleteList(bufList, NULL);
+        } else {
+            resultList = getWhere(targetList, &hasBorrowerPredicate, 1, borrower);
+        }
+
+    }
+
+    setTableView(resultList, gui);
+
+    deleteList(resultList, NULL);
+}
+
+// run a simple graphical user interface based on libforms
 void runLibformsInterface(int argc, char* argv[], tList* data) {
+    if (data == NULL) return;
+
     targetList = data;
 
+    // initialize libforms
     fl_initialize(&argc, argv, "FormDemo", 0, 0);
 
     gui = create_form_libformsGUI();

@@ -18,8 +18,7 @@ void clearTableView(FD_libformsGUI* gui) {
 
 // update the GUIs table view via the its FormBrowser container object
 void setTableView(tList* source, FD_libformsGUI* gui) {
-    
-    // remove a previous table view:w
+    // remove a previously existing table view
     if (gui != NULL) {
         clearTableView(gui);
     }
@@ -137,7 +136,7 @@ void insertRecordCallback( FL_OBJECT* source, long arg) {
 }
 
 void searchRecordsCallback( FL_OBJECT* source, long arg) {
-    return;
+   searchRecords(); 
 }
 
 void deleteRecordCallback( FL_OBJECT* source, long arg) {

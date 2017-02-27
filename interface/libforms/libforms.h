@@ -4,6 +4,7 @@
 #include "list/list.h"
 
 void insertRecord();
+void searchRecords();
 
 void runLibformsInterface(int argc, char* argv[], tList* data);
 
