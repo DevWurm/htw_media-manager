@@ -3,14 +3,60 @@
 #include <stdlib.h>
 #include "gui.h"
 #include "libforms.h"
+#include "medium/medium.h"
+#include "list/list.h"
 
+// @private
+// unmount and delete a possibly existing table view from the specified gui
+void clearTableView(FD_libformsGUI* gui) {
+    if (gui != NULL && gui->table_view != NULL) {
+        fl_delete_formbrowser(gui->table_view_container, gui->table_view);
+        fl_free_form(gui->table_view);
+        gui->table_view = NULL;
+    }
+}
 
-/***************************************
- ***************************************/
+// update the GUIs table view via the its FormBrowser container object
+void setTableView(tList* source, FD_libformsGUI* gui) {
+    
+    // remove a previous table view:w
+    if (gui != NULL) {
+        clearTableView(gui);
+    }
 
-FD_libformsGUI *
-create_form_libformsGUI( void )
-{
+    if (source == NULL || gui == NULL) {
+        return;
+    }
+
+    int yCord = 10;
+    tIterator* it = toIterator(source);
+    tMedium* currMedium;
+    FL_OBJECT *obj;
+
+    // creating a form which simulates a table view
+    gui->table_view = fl_bgn_form(FL_NO_BOX, 500, 700);
+
+    // insert the elements to the table view
+    for (currMedium = getNext(it); currMedium; currMedium = getNext(it)) {
+        fl_add_text( FL_NORMAL_TEXT, 50, yCord, 100, 20, currMedium->title);
+        fl_add_text( FL_NORMAL_TEXT, 150, yCord, 100, 20, currMedium->artist);
+        fl_add_text( FL_NORMAL_TEXT, 250, yCord, 100, 20, currMedium->borrower);
+        obj = fl_add_button( FL_NORMAL_BUTTON, 350, yCord, 50, 20, "X" );
+        fl_set_object_callback( obj, deleteRecordCallback, 0 );
+
+        yCord += 30;
+    }
+
+    fl_end_form();
+
+    // mounting the created table view form in the FormBrowser
+    fl_addto_formbrowser(gui->table_view_container, gui->table_view);
+
+    deleteIterator(it);
+}
+
+// create a new application GUI
+FD_libformsGUI * create_form_libformsGUI( void ) {
     FL_OBJECT *obj;
     FD_libformsGUI *fdui = ( FD_libformsGUI * ) fl_malloc( sizeof *fdui );
 
@@ -19,6 +65,7 @@ create_form_libformsGUI( void )
 
     fdui->libformsGUI = fl_bgn_form( FL_NO_BOX, 1276, 1386 );
 
+    // create an empty trigger object to emit general application events
     fdui->trigger_object = fl_bgn_group();
     fl_end_group( );
 
@@ -27,6 +74,7 @@ create_form_libformsGUI( void )
     obj = fl_add_text( FL_NORMAL_TEXT, 70, 40, 470, 60, "Media Manager" );
     fl_set_object_lsize( obj, FL_HUGE_SIZE );
 
+    // Insert view
     fdui->insert_view = fl_bgn_group( );
 
     obj = fl_add_text( FL_NORMAL_TEXT, 70, 140, 230, 30, "Insert" );
@@ -47,34 +95,36 @@ create_form_libformsGUI( void )
 
     fl_end_group( );
 
+    // Show view
     fdui->show_view = fl_bgn_group( );
 
     obj = fl_add_text( FL_NORMAL_TEXT, 70, 400, 230, 30, "Show" );
     fl_set_object_lsize( obj, FL_LARGE_SIZE );
 
-    obj = fl_add_input( FL_NORMAL_INPUT, 140, 480, 220, 30, "Titel" );
-    fl_set_object_lsize( obj, FL_NORMAL_SIZE );
-
-    obj = fl_add_input( FL_NORMAL_INPUT, 420, 480, 220, 30, "Artist" );
-    fl_set_object_lsize( obj, FL_NORMAL_SIZE );
-
-    obj = fl_add_input( FL_NORMAL_INPUT, 740, 480, 220, 30, "Borrower" );
-    fl_set_object_lsize( obj, FL_NORMAL_SIZE );
-
     obj = fl_add_text( FL_NORMAL_TEXT, 90, 440, 130, 30, "Search" );
     fl_set_object_lsize( obj, FL_MEDIUM_SIZE );
 
-    obj = fl_add_frame( FL_ENGRAVED_FRAME, 100, 550, 860, 560, "" );
+    fdui->search_input_title = obj = fl_add_input( FL_NORMAL_INPUT, 140, 480, 220, 30, "Titel" );
+    fl_set_object_lsize( obj, FL_NORMAL_SIZE );
 
-    obj = fl_add_text( FL_NORMAL_TEXT, 110, 570, 140, 20, "text" );
+    fdui->search_input_artist = obj = fl_add_input( FL_NORMAL_INPUT, 420, 480, 220, 30, "Artist" );
+    fl_set_object_lsize( obj, FL_NORMAL_SIZE );
 
-    fl_end_group( );
+    fdui->search_input_borrower = fl_add_input( FL_NORMAL_INPUT, 740, 480, 220, 30, "Borrower" );
+    fl_set_object_lsize( obj, FL_NORMAL_SIZE );
 
     fdui->search_button = obj = fl_add_button( FL_NORMAL_BUTTON, 1010, 480, 130, 30, "Search" );
     fl_set_object_lsize( obj, FL_NORMAL_SIZE );
     fl_set_object_callback( obj, searchRecordsCallback, 0 );
 
+    // Table view
+    fdui->table_view_container = obj = fl_add_formbrowser(FL_NORMAL_FORMBROWSER, 100, 550, 860, 560, "");
+
+    fl_end_group( );
+
     fl_end_form( );
+
+    fdui->table_view = NULL;
 
     fdui->libformsGUI->fdui = fdui;
 
@@ -85,6 +135,11 @@ create_form_libformsGUI( void )
 void insertRecordCallback( FL_OBJECT* source, long arg) {
     insertRecord();
 }
+
 void searchRecordsCallback( FL_OBJECT* source, long arg) {
+    return;
+}
+
+void deleteRecordCallback( FL_OBJECT* source, long arg) {
     return;
 }

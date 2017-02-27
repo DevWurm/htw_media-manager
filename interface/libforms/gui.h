@@ -4,6 +4,7 @@
 #define FD_libformsGUI_h_
 
 #include <forms.h>
+#include "list/list.h"
 
 #if defined __cplusplus
 extern "C"
@@ -14,6 +15,7 @@ extern "C"
 
 void insertRecordCallback( FL_OBJECT *, long );
 void searchRecordsCallback( FL_OBJECT *, long );
+void deleteRecordCallback( FL_OBJECT *, long );
 
 
 /* Forms and Objects */
@@ -30,10 +32,17 @@ typedef struct {
     FL_OBJECT * insert_input_borrower;
     FL_OBJECT * insert_button;
     FL_OBJECT * show_view;
+    FL_OBJECT * search_input_title;
+    FL_OBJECT * search_input_artist;
+    FL_OBJECT * search_input_borrower;
     FL_OBJECT * search_button;
+    FL_OBJECT * table_view_container;
+    FL_FORM   * table_view;
 } FD_libformsGUI;
 
 FD_libformsGUI * create_form_libformsGUI( void );
+
+void setTableView(tList* source, FD_libformsGUI* gui);
 
 #if defined __cplusplus
 }

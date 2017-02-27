@@ -41,13 +41,17 @@ void runLibformsInterface(int argc, char* argv[], tList* data) {
 
     fl_show_form(gui->libformsGUI, FL_PLACE_FREE, FL_FULLBORDER, "Media Manager");
 
+    // set up initial table view
+    setTableView(data, gui);
+
+    // keep GUI open while it is visible
     do {
-        puts("Test");
         fl_do_forms();
-        puts("Test");
     } while (fl_form_is_visible(gui->libformsGUI));
 
+    // tear down gui
     fl_free_form(gui->libformsGUI);
+    if (gui->table_view) {fl_free_form(gui->table_view);}
     fl_free(gui);
     fl_finish();
     signal(SIGINT, SIG_DFL);
