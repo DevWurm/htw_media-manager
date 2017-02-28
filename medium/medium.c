@@ -138,3 +138,45 @@ BOOL hasBorrowerPredicate(void* vmedium, int argc, va_list argv) {
 
     return strcmp(medium->borrower, ref) == 0 ? TRUE : FALSE;
 }
+
+ORD titleComperatorAsc(void* vmediuml, void* vmediumr) {
+    tMedium* mediuml = vmediuml;
+    tMedium* mediumr = vmediumr;
+
+    int comp = strcmp(mediuml->title, mediumr->title);
+
+    if (comp == 0) return EQ;
+    else return comp < 0 ? LT : GT;
+}
+
+ORD titleComperatorDesc(void* vmediuml, void* vmediumr) {
+    return -1 * titleComperatorAsc(vmediuml, vmediumr);
+}
+
+ORD artistComperatorAsc(void* vmediuml, void* vmediumr) {
+    tMedium* mediuml = vmediuml;
+    tMedium* mediumr = vmediumr;
+
+    int comp = strcmp(mediuml->artist, mediumr->artist);
+
+    if (comp == 0) return EQ;
+    else return comp < 0 ? LT : GT;
+}
+
+ORD artistComperatorDesc(void* vmediuml, void* vmediumr) {
+    return -1 * artistComperatorAsc(vmediuml, vmediumr);
+}
+
+ORD borrowerComperatorAsc(void* vmediuml, void* vmediumr) {
+    tMedium* mediuml = vmediuml;
+    tMedium* mediumr = vmediumr;
+
+    int comp = strcmp(mediuml->borrower, mediumr->borrower);
+
+    if (comp == 0) return EQ;
+    else return comp < 0 ? LT : GT;
+}
+
+ORD borrowerComperatorDesc(void* vmediuml, void* vmediumr) {
+    return -1 * borrowerComperatorAsc(vmediuml, vmediumr);
+}

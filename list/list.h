@@ -8,6 +8,7 @@
 typedef struct LIST_EL {
     void* value;
     struct LIST_EL* next;
+    struct LIST_EL* prev;
 } tListEl;
 
 typedef struct {
@@ -22,6 +23,7 @@ typedef BOOL (*tPredicate)(void* val, int argc, va_list argv);
 typedef ERRSTATE (*tDeleter)(void* val);
 typedef char* (*tSerializer)(void* val);
 typedef void* (*tDeserializer)(char* val);
+typedef ORD (*tComperator)(void* left, void* right);
 
 // List operations
 tList* createList();
@@ -40,5 +42,8 @@ void* getNext(tIterator* it);
 // Persistance Operators
 ERRSTATE storeList(tList* list, FILE* dest, tSerializer serializer);
 ERRSTATE restoreList(tList* list, FILE* src, tDeserializer deserializer);
+
+// sortation operators
+void sort(tList* list, tComperator comp);
 
 #endif

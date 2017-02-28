@@ -27,20 +27,39 @@ void setTableView(tList* source, FD_libformsGUI* gui) {
         return;
     }
 
-    int yCord = 10;
+    FL_OBJECT *obj;
+    int yCord = 30;
     tIterator* it = toIterator(source);
     tMedium* currMedium;
-    FL_OBJECT *obj;
 
     // creating a form which simulates a table view
-    gui->table_view = fl_bgn_form(FL_NO_BOX, 500, 700);
+    gui->table_view = fl_bgn_form(FL_NO_BOX, 700, 700);
+
+    // create table head
+    fl_add_text( FL_NORMAL_TEXT, 50, 10, 50, 20, "Title");
+    obj = fl_add_button( FL_NORMAL_BUTTON, 100, 10, 20, 20, "A");
+    fl_set_object_callback( obj, sortRecordsCallback, SORT_TITLE_ASC);
+    obj = fl_add_button( FL_NORMAL_BUTTON, 125, 10, 25, 20, "D");
+    fl_set_object_callback( obj, sortRecordsCallback, SORT_TITLE_DESC);
+
+    fl_add_text( FL_NORMAL_TEXT, 200, 10, 50, 20, "Artist");
+    obj = fl_add_button( FL_NORMAL_BUTTON, 250, 10, 20, 20, "A");
+    fl_set_object_callback( obj, sortRecordsCallback, SORT_ARTIST_ASC);
+    obj = fl_add_button( FL_NORMAL_BUTTON, 275, 10, 25, 20, "D");
+    fl_set_object_callback( obj, sortRecordsCallback, SORT_ARTIST_DESC);
+
+    fl_add_text( FL_NORMAL_TEXT, 350, 10, 100, 20, "Borrower");
+    obj = fl_add_button( FL_NORMAL_BUTTON, 425, 10, 20, 20, "A");
+    fl_set_object_callback( obj, sortRecordsCallback, SORT_BORROWER_ASC);
+    obj = fl_add_button( FL_NORMAL_BUTTON, 450, 10, 25, 20, "D");
+    fl_set_object_callback( obj, sortRecordsCallback, SORT_BORROWER_DESC);
 
     // insert the elements to the table view
     for (currMedium = getNext(it); currMedium; currMedium = getNext(it)) {
-        fl_add_text( FL_NORMAL_TEXT, 50, yCord, 100, 20, currMedium->title);
-        fl_add_text( FL_NORMAL_TEXT, 150, yCord, 100, 20, currMedium->artist);
-        fl_add_text( FL_NORMAL_TEXT, 250, yCord, 100, 20, currMedium->borrower);
-        obj = fl_add_button( FL_NORMAL_BUTTON, 350, yCord, 50, 20, "X" );
+        fl_add_text( FL_NORMAL_TEXT, 50, yCord, 150, 20, currMedium->title);
+        fl_add_text( FL_NORMAL_TEXT, 200, yCord, 150, 20, currMedium->artist);
+        fl_add_text( FL_NORMAL_TEXT, 350, yCord, 150, 20, currMedium->borrower);
+        obj = fl_add_button( FL_NORMAL_BUTTON, 500, yCord, 50, 20, "X" );
         fl_set_object_callback( obj, deleteRecordCallback, (long) currMedium->id);
 
         yCord += 30;
@@ -143,4 +162,9 @@ void searchRecordsCallback( FL_OBJECT* source, long arg) {
 void deleteRecordCallback( FL_OBJECT* source, long arg) {
     deleteRecord((unsigned long) arg);
     searchRecords(); // update table view
+}
+
+void sortRecordsCallback( FL_OBJECT* source, long arg ) {
+    sortRecords(arg);
+    searchRecords(); // update taböe view
 }

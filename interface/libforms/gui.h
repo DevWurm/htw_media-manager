@@ -16,6 +16,7 @@ extern "C"
 void insertRecordCallback( FL_OBJECT *, long );
 void searchRecordsCallback( FL_OBJECT *, long );
 void deleteRecordCallback( FL_OBJECT *, long );
+void sortRecordsCallback( FL_OBJECT *, long );
 
 
 /* Forms and Objects */

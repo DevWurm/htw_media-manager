@@ -24,4 +24,11 @@ BOOL hasTitlePredicate(void* vmedium, int argc, va_list argv);
 BOOL hasArtistPredicate(void* vmedium, int argc, va_list argv);
 BOOL hasBorrowerPredicate(void* vmedium, int argc, va_list argv);
 
+ORD titleComperatorAsc(void* vmediuml, void* vmediumr);
+ORD titleComperatorDesc(void* vmediuml, void* vmediumr);
+ORD artistComperatorAsc(void* vmediuml, void* vmediumr);
+ORD artistComperatorDesc(void* vmediuml, void* vmediumr);
+ORD borrowerComperatorAsc(void* vmediuml, void* vmediumr);
+ORD borrowerComperatorDesc(void* vmediuml, void* vmediumr);
+
 #endif

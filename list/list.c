@@ -18,6 +18,9 @@ ERRSTATE deleteHead(tList* target, tDeleter deleter) {
     if (head == NULL) return ERR;
 
     target->head = head->next;
+    if (target->head != NULL) {
+        target->head->prev = NULL;
+    }
 
     if (deleter != NULL) {
         if (!deleter(head->value)) return ERR;
@@ -55,8 +58,12 @@ ERRSTATE insert(tList* target, void* data) {
     tListEl* el = malloc(sizeof(tListEl));
     if (el == NULL) return ERR;
 
+    el->prev = NULL;
     el->value = data;
     el->next = target->head;
+    if (target->head != NULL) {
+        target->head->prev = el;
+    }
     target->head = el;
 
     return OK;
@@ -101,6 +108,9 @@ ERRSTATE deleteWhere(tList* list, tDeleter deleter, tPredicate pred, int argc, .
         if (pred(p->next->value, argc, vl)) {
             tListEl* el = p->next;
             p->next = p->next->next;
+            if (p->next != NULL) {
+                p->next->prev = p;
+            }
 
             if(deleter != NULL) {
                 if (!deleter(el->value)) return ERR;
@@ -169,4 +179,30 @@ ERRSTATE restoreList(tList* list, FILE* src, tDeserializer deserializer) {
     }
 
     return OK;
+}
+
+// sortation operators
+
+// sorts a list by using the specified comperator
+void sort(tList* list, tComperator comp) {
+    // sorts a linked list of tListEl elements using bubblesort;
+    // to reduce complexity and to improve performanc the values of
+    // the elements are swapped insgtead of the elements itself;
+      
+    tListEl *i, *j, *last;
+    void* buf;
+
+    // search last element of list
+    for (last = list->head; last->next != NULL; last = last->next);
+
+    for (i = last; i->prev != NULL; i = i->prev) {
+        for (j = list->head; j != i; j = j->next) {
+            if (comp(j->value, j->next->value) == GT) {
+                // swap values
+                buf = j->value;
+                j->value = j->next->value;
+                j->next->value = buf;
+            }
+        }
+    }
 }

@@ -90,6 +90,20 @@ void deleteRecord(unsigned long id) {
     deleteWhere(targetList, &deleteMediumDeleter, &hasIdPredicate, 1, id);
 }
 
+// sort the datastore by the specified mode
+void sortRecords(long mode) {
+   if (targetList == NULL) return;
+
+   switch (mode) {
+       case SORT_TITLE_ASC: sort(targetList, &titleComperatorAsc); break;
+       case SORT_TITLE_DESC: sort(targetList, &titleComperatorDesc); break;
+       case SORT_ARTIST_ASC: sort(targetList, &artistComperatorAsc); break;
+       case SORT_ARTIST_DESC: sort(targetList, &artistComperatorDesc); break;
+       case SORT_BORROWER_ASC: sort(targetList, &borrowerComperatorAsc); break;
+       case SORT_BORROWER_DESC: sort(targetList, &borrowerComperatorDesc); break;
+   }
+}
+
 // run a simple graphical user interface based on libforms
 void runLibformsInterface(int argc, char* argv[], tList* data) {
     if (data == NULL) return;
