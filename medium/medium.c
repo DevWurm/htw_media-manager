@@ -172,7 +172,7 @@ ORD titleComperatorAsc(void* vmediuml, void* vmediumr) {
     tMedium* mediuml = vmediuml;
     tMedium* mediumr = vmediumr;
 
-    int comp = strcmp(mediuml->title, mediumr->title);
+    int comp = strcasecmp(mediuml->title, mediumr->title);
 
     if (comp == 0) return EQ;
     else return comp < 0 ? LT : GT;
@@ -188,7 +188,7 @@ ORD artistComperatorAsc(void* vmediuml, void* vmediumr) {
     tMedium* mediuml = vmediuml;
     tMedium* mediumr = vmediumr;
 
-    int comp = strcmp(mediuml->artist, mediumr->artist);
+    int comp = strcasecmp(mediuml->artist, mediumr->artist);
 
     if (comp == 0) return EQ;
     else return comp < 0 ? LT : GT;
@@ -204,7 +204,7 @@ ORD borrowerComperatorAsc(void* vmediuml, void* vmediumr) {
     tMedium* mediuml = vmediuml;
     tMedium* mediumr = vmediumr;
 
-    int comp = strcmp(mediuml->borrower, mediumr->borrower);
+    int comp = strcasecmp(mediuml->borrower, mediumr->borrower);
 
     if (comp == 0) return EQ;
     else return comp < 0 ? LT : GT;
