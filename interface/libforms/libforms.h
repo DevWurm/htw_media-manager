@@ -40,6 +40,8 @@ void searchRecords();
 void deleteRecord(unsigned long id);
 void sortRecords(long mode);
 
+void hideGUIHandler(int signal);
+
 void runLibformsInterface(int argc, char* argv[], tList* data);
 
 #endif

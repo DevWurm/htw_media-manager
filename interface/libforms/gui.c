@@ -164,6 +164,10 @@ FD_libformsGUI * create_form_libformsGUI( void ) {
 
     fl_end_group( );
 
+    obj = fl_add_button( FL_NORMAL_BUTTON, 100, 1200, 130, 30, "Close" );
+    fl_set_object_lsize( obj, FL_NORMAL_SIZE );
+    fl_set_object_callback( obj, closeCallback, 0 );
+
     fl_end_form( );
 
     fdui->table_view = NULL;
@@ -191,4 +195,8 @@ void deleteRecordCallback( FL_OBJECT* source, long arg) {
 void sortRecordsCallback( FL_OBJECT* source, long arg ) {
     sortRecords(arg);
     searchRecords(); // update table view
+}
+
+void closeCallback( FL_OBJECT* source, long arg ) {
+    hideGUIHandler(-1);
 }
