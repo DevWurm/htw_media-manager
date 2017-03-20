@@ -40,7 +40,7 @@ make clean && make debug
 
 This generates the executable `media-manager`.
 
-## Command Line Iterface
+## Command Line Interface
 Media Manager also brings a very basic command line interface for your media store.
 The CLI is **NOT FEATURE COMPLETE** to the graphical user interface, because it doesn't
 support deleting and sorting of the available information.
